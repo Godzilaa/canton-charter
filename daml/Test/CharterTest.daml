@@ -1,0 +1,243 @@
+module Test.CharterTest where
+
+import Daml.Script
+import DA.Time
+import Charter
+import X402Adapter
+
+-- ---------------------------------------------------------------------------
+-- Party fixture reused across all tests
+-- ---------------------------------------------------------------------------
+data Parties = Parties
+  with
+    enterprise : Party
+    agent      : Party
+    approver   : Party
+
+allocateParties : Script Parties
+allocateParties = do
+  enterprise <- allocateParty "Acme Corp"
+  agent      <- allocateParty "AIAgent"
+  approver   <- allocateParty "CFO"
+  return Parties with ..
+
+defaultPolicy : Parties -> Script (ContractId SpendingPolicy)
+defaultPolicy p = submit p.enterprise do
+  createCmd SpendingPolicy with
+    enterprise           = p.enterprise
+    agent                = p.agent
+    approver             = p.approver
+    maxPerTx             = 100.0
+    dailyLimit           = 500.0
+    allowedCategories    = ["api", "compute", "data"]
+    requireApprovalAbove = Some 50.0
+    active               = True
+
+-- ---------------------------------------------------------------------------
+-- Test: small payment auto-approved (below requireApprovalAbove threshold)
+-- ---------------------------------------------------------------------------
+test_autoApprove : Script ()
+test_autoApprove = do
+  p  <- allocateParties
+  pid <- defaultPolicy p
+  let t = datetime 2024 Jun 22 10 0 0
+
+  authId <- submit p.agent do
+    exerciseCmd pid RequestAuthorization with
+      amount      = 25.0
+      vendor      = "OpenAI"
+      category    = "api"
+      purpose     = "LLM inference for procurement analysis"
+      requestedAt = t
+
+  _recordId <- submit p.agent do
+    exerciseCmd authId Execute with
+      settledAt = t
+      x402Token = Some "tok_abc123"
+      txRef     = "x402-tx-001"
+
+  return ()
+
+-- ---------------------------------------------------------------------------
+-- Test: large payment routed through human approval
+-- ---------------------------------------------------------------------------
+test_humanApproval : Script ()
+test_humanApproval = do
+  p   <- allocateParties
+  pid <- defaultPolicy p
+  let t = datetime 2024 Jun 22 10 0 0
+
+  -- 80.0 >= requireApprovalAbove (50.0) → PendingApproval
+  authId <- submit p.agent do
+    exerciseCmd pid RequestAuthorization with
+      amount      = 80.0
+      vendor      = "AWS"
+      category    = "compute"
+      purpose     = "Batch inference job"
+      requestedAt = t
+
+  -- CFO approves
+  authId2 <- submit p.approver do
+    exerciseCmd authId Approve
+
+  _recordId <- submit p.agent do
+    exerciseCmd authId2 Execute with
+      settledAt = t
+      x402Token = Some "tok_xyz789"
+      txRef     = "x402-tx-002"
+
+  return ()
+
+-- ---------------------------------------------------------------------------
+-- Test: CFO rejects a pending payment
+-- ---------------------------------------------------------------------------
+test_rejection : Script ()
+test_rejection = do
+  p   <- allocateParties
+  pid <- defaultPolicy p
+  let t = datetime 2024 Jun 22 10 0 0
+
+  authId <- submit p.agent do
+    exerciseCmd pid RequestAuthorization with
+      amount      = 90.0
+      vendor      = "UnknownVendor"
+      category    = "data"
+      purpose     = "Bulk data purchase"
+      requestedAt = t
+
+  _recordId <- submit p.approver do
+    exerciseCmd authId Reject with
+      rejectionReason = "Vendor not on approved list"
+
+  return ()
+
+-- ---------------------------------------------------------------------------
+-- Test: policy hard-caps per-tx amount — agent cannot exceed it
+-- ---------------------------------------------------------------------------
+test_perTxLimitEnforced : Script ()
+test_perTxLimitEnforced = do
+  p   <- allocateParties
+  pid <- defaultPolicy p
+  let t = datetime 2024 Jun 22 10 0 0
+
+  submitMustFail p.agent do
+    exerciseCmd pid RequestAuthorization with
+      amount      = 150.0   -- exceeds maxPerTx of 100.0
+      vendor      = "Cohere"
+      category    = "api"
+      purpose     = "Embeddings at scale"
+      requestedAt = t
+
+  return ()
+
+-- ---------------------------------------------------------------------------
+-- Test: disallowed category is blocked
+-- ---------------------------------------------------------------------------
+test_categoryEnforced : Script ()
+test_categoryEnforced = do
+  p   <- allocateParties
+  pid <- defaultPolicy p
+  let t = datetime 2024 Jun 22 10 0 0
+
+  submitMustFail p.agent do
+    exerciseCmd pid RequestAuthorization with
+      amount      = 10.0
+      vendor      = "SomeSaaSVendor"
+      category    = "saas"    -- not in allowedCategories
+      purpose     = "SaaS subscription"
+      requestedAt = t
+
+  return ()
+
+-- ---------------------------------------------------------------------------
+-- Test: kill switch blocks all agent activity immediately
+-- ---------------------------------------------------------------------------
+test_killSwitch : Script ()
+test_killSwitch = do
+  p   <- allocateParties
+  pid <- defaultPolicy p
+  let t = datetime 2024 Jun 22 10 0 0
+
+  -- Enterprise deactivates the policy
+  pid2 <- submit p.enterprise do
+    exerciseCmd pid Deactivate
+
+  -- Agent is now fully blocked
+  submitMustFail p.agent do
+    exerciseCmd pid2 RequestAuthorization with
+      amount      = 10.0
+      vendor      = "OpenAI"
+      category    = "api"
+      purpose     = "Routine call"
+      requestedAt = t
+
+  return ()
+
+-- ---------------------------------------------------------------------------
+-- Test: enterprise can update limits and re-activate
+-- ---------------------------------------------------------------------------
+test_updateAndReactivate : Script ()
+test_updateAndReactivate = do
+  p   <- allocateParties
+  pid <- defaultPolicy p
+  let t = datetime 2024 Jun 22 10 0 0
+
+  pid2 <- submit p.enterprise do exerciseCmd pid Deactivate
+  pid3 <- submit p.enterprise do
+    exerciseCmd pid2 UpdateLimits with
+      newMaxPerTx             = 200.0
+      newDailyLimit           = 1000.0
+      newRequireApprovalAbove = Some 100.0
+  pid4 <- submit p.enterprise do exerciseCmd pid3 Reactivate
+
+  -- Now 150.0 is within the new maxPerTx
+  authId <- submit p.agent do
+    exerciseCmd pid4 RequestAuthorization with
+      amount      = 150.0
+      vendor      = "OpenAI"
+      category    = "api"
+      purpose     = "Large batch job"
+      requestedAt = t
+
+  -- 150.0 >= new requireApprovalAbove (100.0) → needs CFO
+  _authId2 <- submit p.approver do exerciseCmd authId Approve
+
+  return ()
+
+-- ---------------------------------------------------------------------------
+-- Test: full x402 flow with on-chain receipt
+-- ---------------------------------------------------------------------------
+test_x402Flow : Script ()
+test_x402Flow = do
+  p   <- allocateParties
+  pid <- defaultPolicy p
+  let t = datetime 2024 Jun 22 10 0 0
+
+  authId <- submit p.agent do
+    exerciseCmd pid RequestAuthorization with
+      amount      = 5.0
+      vendor      = "WeatherAPI"
+      category    = "api"
+      purpose     = "Real-time weather data for logistics agent"
+      requestedAt = t
+
+  recordId <- submit p.agent do
+    exerciseCmd authId Execute with
+      settledAt = t
+      x402Token = Some "x402-bearer-deadbeef"
+      txRef     = "x402-tx-003"
+
+  -- Anchor the raw x402 HTTP receipt on-chain
+  _receiptId <- submit p.enterprise do
+    createCmd X402Receipt with
+      enterprise   = p.enterprise
+      agent        = p.agent
+      recordId
+      apiEndpoint  = "https://api.weather.example/v1/forecast"
+      paymentToken = "x402-bearer-deadbeef"
+      amount       = 5.0
+      currency     = "USDC"
+      network      = "Canton"
+      receivedAt   = t
+
+  return ()

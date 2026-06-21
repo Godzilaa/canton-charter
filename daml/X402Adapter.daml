@@ -1,0 +1,31 @@
+module X402Adapter where
+
+import Charter (SpendingPolicy, PaymentRecord)
+import DA.Time (Time)
+
+-- ---------------------------------------------------------------------------
+-- X402Receipt
+-- Anchors the raw HTTP 402 payment receipt on-chain, linking it to the
+-- corresponding PaymentRecord. Created by the agent after a successful
+-- x402 flow so the full payment provenance is auditable on Canton.
+-- ---------------------------------------------------------------------------
+template X402Receipt
+  with
+    enterprise   : Party
+    agent        : Party
+    recordId     : ContractId PaymentRecord  -- the settled PaymentRecord
+    apiEndpoint  : Text                      -- URL that returned HTTP 402
+    paymentToken : Text                      -- X-Payment-Token the payee accepted
+    amount       : Decimal
+    currency     : Text                      -- e.g. "USDC", "ETH"
+    network      : Text                      -- settlement network / chain
+    receivedAt   : Time
+  where
+    signatory enterprise
+    observer  agent
+
+    -- | Agent can link the receipt to an existing PaymentRecord.
+    -- Useful when the x402 flow completes asynchronously.
+    nonconsuming choice Acknowledge : ()
+      controller agent
+      do return ()

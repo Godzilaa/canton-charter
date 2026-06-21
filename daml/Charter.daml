@@ -1,0 +1,191 @@
+module Charter where
+
+import DA.Time (Time)
+
+-- | Lifecycle state of a payment authorization.
+data AuthStatus
+  = PendingApproval  -- amount >= requireApprovalAbove; needs human sign-off
+  | Approved         -- cleared to execute
+  | Rejected
+  deriving (Eq, Show)
+
+-- ---------------------------------------------------------------------------
+-- SpendingPolicy
+-- The hard boundary the enterprise encodes for its AI agent. Only the
+-- enterprise can create or modify it; the agent cannot alter its own limits.
+-- ---------------------------------------------------------------------------
+template SpendingPolicy
+  with
+    enterprise           : Party
+    agent                : Party
+    approver             : Party         -- human-in-loop for large payments
+    maxPerTx             : Decimal       -- hard cap per single transaction
+    dailyLimit           : Decimal       -- ceiling for rolling compliance audits
+    allowedCategories    : [Text]        -- e.g. ["api", "compute", "data"]
+    requireApprovalAbove : Optional Decimal
+    active               : Bool
+  where
+    signatory enterprise
+    observer  agent, approver
+
+    ensure maxPerTx > 0.0 && dailyLimit >= maxPerTx
+
+    -- | Agent requests payment authorization. All policy checks run here.
+    -- Non-consuming so multiple authorizations can run against one policy.
+    nonconsuming choice RequestAuthorization : ContractId PaymentAuthorization
+      with
+        amount      : Decimal
+        vendor      : Text
+        category    : Text
+        purpose     : Text
+        requestedAt : Time
+      controller agent
+      do
+        assertMsg "Policy is inactive"               active
+        assertMsg "Amount must be positive"          (amount > 0.0)
+        assertMsg ("Exceeds per-tx limit of " <> show maxPerTx) (amount <= maxPerTx)
+        assertMsg ("Category not permitted: " <> category)      (category `elem` allowedCategories)
+        let needsApproval = case requireApprovalAbove of
+              None     -> False
+              Some thr -> amount >= thr
+        create PaymentAuthorization with
+          policyId    = self
+          enterprise
+          agent
+          approver
+          amount
+          vendor
+          category
+          purpose
+          requestedAt
+          status = if needsApproval then PendingApproval else Approved
+
+    -- | Adjust spend limits without changing other policy fields.
+    choice UpdateLimits : ContractId SpendingPolicy
+      with
+        newMaxPerTx             : Decimal
+        newDailyLimit           : Decimal
+        newRequireApprovalAbove : Optional Decimal
+      controller enterprise
+      do
+        assertMsg "maxPerTx must be positive"       (newMaxPerTx > 0.0)
+        assertMsg "dailyLimit must be >= maxPerTx"  (newDailyLimit >= newMaxPerTx)
+        create this with
+          maxPerTx             = newMaxPerTx
+          dailyLimit           = newDailyLimit
+          requireApprovalAbove = newRequireApprovalAbove
+
+    -- | Permit a new spending category.
+    choice AddCategory : ContractId SpendingPolicy
+      with newCategory : Text
+      controller enterprise
+      do create this with allowedCategories = newCategory :: allowedCategories
+
+    -- | Emergency kill switch — blocks all new authorization requests immediately.
+    choice Deactivate : ContractId SpendingPolicy
+      controller enterprise
+      do create this with active = False
+
+    choice Reactivate : ContractId SpendingPolicy
+      controller enterprise
+      do create this with active = True
+
+
+-- ---------------------------------------------------------------------------
+-- PaymentAuthorization
+-- A single payment request that has passed policy validation.
+-- Awaits either human approval (PendingApproval) or direct execution (Approved).
+-- ---------------------------------------------------------------------------
+template PaymentAuthorization
+  with
+    policyId    : ContractId SpendingPolicy
+    enterprise  : Party
+    agent       : Party
+    approver    : Party
+    amount      : Decimal
+    vendor      : Text
+    category    : Text
+    purpose     : Text
+    requestedAt : Time
+    status      : AuthStatus
+  where
+    signatory enterprise, agent
+    observer  approver
+
+    -- | CFO / approver clears a pending authorization.
+    choice Approve : ContractId PaymentAuthorization
+      controller approver
+      do
+        assertMsg "Only pending authorizations can be approved" (status == PendingApproval)
+        create this with status = Approved
+
+    -- | CFO / approver denies — emits an immutable rejection record.
+    choice Reject : ContractId PaymentRecord
+      with rejectionReason : Text
+      controller approver
+      do
+        assertMsg "Only pending authorizations can be rejected" (status == PendingApproval)
+        create PaymentRecord with
+          policyId
+          enterprise
+          agent
+          approver
+          amount
+          vendor
+          category
+          purpose
+          requestedAt
+          settledAt = requestedAt
+          outcome   = "rejected: " <> rejectionReason
+          x402Token = None
+          txRef     = ""
+
+    -- | Agent executes an approved authorization and settles the payment.
+    -- Emits an immutable PaymentRecord for the compliance log.
+    choice Execute : ContractId PaymentRecord
+      with
+        settledAt : Time
+        x402Token : Optional Text   -- bearer token from x402 payee
+        txRef     : Text            -- external transaction / x402 receipt ID
+      controller agent
+      do
+        assertMsg "Authorization must be approved before execution" (status == Approved)
+        create PaymentRecord with
+          policyId
+          enterprise
+          agent
+          approver
+          amount
+          vendor
+          category
+          purpose
+          requestedAt
+          settledAt
+          outcome   = "succeeded"
+          x402Token
+          txRef
+
+
+-- ---------------------------------------------------------------------------
+-- PaymentRecord
+-- Immutable on-chain audit entry. No archival choices — permanent log.
+-- Visible to the enterprise, the agent, and the approver for compliance queries.
+-- ---------------------------------------------------------------------------
+template PaymentRecord
+  with
+    policyId    : ContractId SpendingPolicy
+    enterprise  : Party
+    agent       : Party
+    approver    : Party
+    amount      : Decimal
+    vendor      : Text
+    category    : Text
+    purpose     : Text
+    requestedAt : Time
+    settledAt   : Time
+    outcome     : Text            -- "succeeded" | "rejected: <reason>"
+    x402Token   : Optional Text
+    txRef       : Text
+  where
+    signatory enterprise
+    observer  agent, approver
