@@ -1,34 +1,90 @@
 'use client'
 
 const BASE = '/api/ledger'
+const PKG  = '7609a6c39916b5002ba39f9e487018070a6b0135ab768322d2c9dac0df973fde'
 
-async function req<T>(path: string, body?: unknown): Promise<T> {
+function templateId(shortId: string) {
+  // shortId: "Charter:SpendingPolicy" or "X402Adapter:X402Receipt"
+  return `${PKG}:${shortId}`
+}
+
+async function req<T>(path: string, body?: unknown, method = 'POST'): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
-    method: body !== undefined ? 'POST' : 'GET',
+    method: body !== undefined ? method : 'GET',
     headers: { 'Content-Type': 'application/json' },
     body: body !== undefined ? JSON.stringify(body) : undefined,
   })
   const json = await res.json()
-  if (!res.ok || json.status >= 400) {
-    throw new Error(json.errors?.[0] ?? json.error ?? 'Ledger API error')
+  if (!res.ok) {
+    throw new Error(json.cause ?? json.errors?.[0] ?? json.error ?? 'Ledger API error')
   }
-  return json.result ?? json
+  return json
 }
 
-export async function queryContracts<T>(templateId: string): Promise<T[]> {
-  const data = await req<{ result: T[] }>('/v1/query', { templateIds: [templateId] })
-  return (data as any).result ?? []
+function actingParty(): string {
+  if (typeof window === 'undefined') return ''
+  return localStorage.getItem('party_enterprise') ?? ''
 }
 
-export async function createContract(templateId: string, payload: unknown) {
-  return req('/v1/create', { templateId, payload })
+let cmdSeq = 0
+function commandId() {
+  return `charter-cmd-${Date.now()}-${++cmdSeq}`
+}
+
+export async function queryContracts<T>(shortTemplateId: string): Promise<T[]> {
+  const body = {
+    filter: {
+      filtersForAnyParty: {
+        inclusive: {
+          templateFilters: [{ templateId: templateId(shortTemplateId) }],
+        },
+      },
+    },
+    verbose: true,
+  }
+  const data = await req<unknown[]>('/v2/state/active-contracts', body)
+  return (Array.isArray(data) ? data : []).map((item: any) => ({
+    contractId: item.contractId ?? item.ContractId,
+    templateId: item.templateId ?? item.TemplateId,
+    payload: item.createArgument ?? item.createArguments ?? item.payload,
+  })) as T[]
+}
+
+export async function createContract(shortTemplateId: string, payload: unknown) {
+  const party = actingParty()
+  return req('/v2/commands/submit-and-wait-for-transaction', {
+    commands: {
+      commandId: commandId(),
+      actAs: [party],
+      commands: [{
+        CreateCommand: {
+          templateId: templateId(shortTemplateId),
+          createArguments: payload,
+        },
+      }],
+    },
+  })
 }
 
 export async function exerciseChoice(
-  templateId: string,
+  shortTemplateId: string,
   contractId: string,
   choice: string,
   argument: unknown = {}
 ) {
-  return req('/v1/exercise', { templateId, contractId, choice, argument })
+  const party = actingParty()
+  return req('/v2/commands/submit-and-wait-for-transaction', {
+    commands: {
+      commandId: commandId(),
+      actAs: [party],
+      commands: [{
+        ExerciseCommand: {
+          templateId: templateId(shortTemplateId),
+          contractId,
+          choice,
+          choiceArgument: argument,
+        },
+      }],
+    },
+  })
 }

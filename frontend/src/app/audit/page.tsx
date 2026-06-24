@@ -109,7 +109,7 @@ export default function AuditPage() {
                   </td>
                   <td className="mono">{r.payload.txRef || '—'}</td>
                   <td className="mono">
-                    {r.payload.x402Token.tag === 'Some' ? r.payload.x402Token.value.slice(0, 16) + '...' : '—'}
+                    {r.payload.x402Token ? String(r.payload.x402Token).slice(0, 16) + '...' : '—'}
                   </td>
                 </tr>
               ))}

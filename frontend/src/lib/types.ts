@@ -1,4 +1,5 @@
-export type Optional<T> = { tag: 'Some'; value: T } | { tag: 'None' }
+// v2 API: Optional<T> is T | null (Some = value, None = null)
+export type Optional<T> = T | null
 
 export type AuthStatus =
   | { tag: 'PendingApproval' }

@@ -45,7 +45,7 @@ function PolicyCard({ policy, onAction }: { policy: SpendingPolicy; onAction: ()
       <div className="policy-card-limits">
         Max / Tx: <strong>${p.maxPerTx}</strong><br />
         Daily: <strong>${p.dailyLimit}</strong><br />
-        {p.requireApprovalAbove.tag === 'Some' && <>Approval above: <strong>${p.requireApprovalAbove.value}</strong><br /></>}
+        {p.requireApprovalAbove != null && <>Approval above: <strong>${p.requireApprovalAbove}</strong><br /></>}
         Categories: <strong>{p.allowedCategories.join(', ')}</strong>
       </div>
       <div className="policy-card-actions">
@@ -107,9 +107,7 @@ export default function Dashboard() {
         maxPerTx: form.maxPerTx,
         dailyLimit: form.dailyLimit,
         allowedCategories: categories,
-        requireApprovalAbove: form.requireApproval
-          ? { tag: 'Some', value: form.approvalThreshold }
-          : { tag: 'None' },
+        requireApprovalAbove: form.requireApproval ? form.approvalThreshold : null,
         active: form.active,
       })
       setToast({ msg: 'Policy created on-chain', type: 'success' })
