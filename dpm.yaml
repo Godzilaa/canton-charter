@@ -1,8 +1,9 @@
 name: canton-charter
 version: 1.0.0
-sdkVersion: 2.9.4
+sdkVersion: 3.4.11
 description: "Agentic payment authorization contracts for Canton — enforces SpendingPolicy guardrails and anchors x402 receipts on-chain"
 main: .daml/dist/canton-charter-1.0.0.dar
+
 source: daml
 dependencies:
   daml-prim: "*"
