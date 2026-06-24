@@ -1,7 +1,8 @@
 module Test.CharterTest where
 
 import Daml.Script
-import DA.Time
+import DA.Date (date, Month(..))
+import DA.Time (time)
 import Charter
 import X402Adapter
 
@@ -40,7 +41,7 @@ test_autoApprove : Script ()
 test_autoApprove = do
   p  <- allocateParties
   pid <- defaultPolicy p
-  let t = datetime 2024 Jun 22 10 0 0
+  let t = time (date 2024 Jun 22) 10 0 0
 
   authId <- submit p.agent do
     exerciseCmd pid RequestAuthorization with
@@ -65,7 +66,7 @@ test_humanApproval : Script ()
 test_humanApproval = do
   p   <- allocateParties
   pid <- defaultPolicy p
-  let t = datetime 2024 Jun 22 10 0 0
+  let t = time (date 2024 Jun 22) 10 0 0
 
   -- 80.0 >= requireApprovalAbove (50.0) → PendingApproval
   authId <- submit p.agent do
@@ -95,7 +96,7 @@ test_rejection : Script ()
 test_rejection = do
   p   <- allocateParties
   pid <- defaultPolicy p
-  let t = datetime 2024 Jun 22 10 0 0
+  let t = time (date 2024 Jun 22) 10 0 0
 
   authId <- submit p.agent do
     exerciseCmd pid RequestAuthorization with
@@ -118,7 +119,7 @@ test_perTxLimitEnforced : Script ()
 test_perTxLimitEnforced = do
   p   <- allocateParties
   pid <- defaultPolicy p
-  let t = datetime 2024 Jun 22 10 0 0
+  let t = time (date 2024 Jun 22) 10 0 0
 
   submitMustFail p.agent do
     exerciseCmd pid RequestAuthorization with
@@ -137,7 +138,7 @@ test_categoryEnforced : Script ()
 test_categoryEnforced = do
   p   <- allocateParties
   pid <- defaultPolicy p
-  let t = datetime 2024 Jun 22 10 0 0
+  let t = time (date 2024 Jun 22) 10 0 0
 
   submitMustFail p.agent do
     exerciseCmd pid RequestAuthorization with
@@ -156,7 +157,7 @@ test_killSwitch : Script ()
 test_killSwitch = do
   p   <- allocateParties
   pid <- defaultPolicy p
-  let t = datetime 2024 Jun 22 10 0 0
+  let t = time (date 2024 Jun 22) 10 0 0
 
   -- Enterprise deactivates the policy
   pid2 <- submit p.enterprise do
@@ -180,7 +181,7 @@ test_updateAndReactivate : Script ()
 test_updateAndReactivate = do
   p   <- allocateParties
   pid <- defaultPolicy p
-  let t = datetime 2024 Jun 22 10 0 0
+  let t = time (date 2024 Jun 22) 10 0 0
 
   pid2 <- submit p.enterprise do exerciseCmd pid Deactivate
   pid3 <- submit p.enterprise do
@@ -211,7 +212,7 @@ test_x402Flow : Script ()
 test_x402Flow = do
   p   <- allocateParties
   pid <- defaultPolicy p
-  let t = datetime 2024 Jun 22 10 0 0
+  let t = time (date 2024 Jun 22) 10 0 0
 
   authId <- submit p.agent do
     exerciseCmd pid RequestAuthorization with

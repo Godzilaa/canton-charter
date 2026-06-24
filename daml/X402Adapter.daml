@@ -1,6 +1,6 @@
 module X402Adapter where
 
-import Charter (SpendingPolicy, PaymentRecord)
+import Charter (PaymentRecord)
 
 -- ---------------------------------------------------------------------------
 -- X402Receipt
