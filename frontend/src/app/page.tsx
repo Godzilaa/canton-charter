@@ -7,12 +7,13 @@ import Toast from '@/components/Toast'
 type ToastState = { msg: string; type: 'success' | 'error' } | null
 
 function useParties() {
+  const LOCAL_PARTY = '14::1220a14ca128063b8dc9d1ebb0bd22633be9f2168500f4dbc1ecaeb1855b14e5acf8'
   const [parties, setParties] = useState({ enterprise: '', agent: '', approver: '' })
   useEffect(() => {
     setParties({
-      enterprise: localStorage.getItem('party_enterprise') ?? '',
-      agent: localStorage.getItem('party_agent') ?? '',
-      approver: localStorage.getItem('party_approver') ?? '',
+      enterprise: localStorage.getItem('party_enterprise') ?? LOCAL_PARTY,
+      agent:      localStorage.getItem('party_agent')      ?? LOCAL_PARTY,
+      approver:   localStorage.getItem('party_approver')   ?? LOCAL_PARTY,
     })
   }, [])
   const save = (k: string, v: string) => {
