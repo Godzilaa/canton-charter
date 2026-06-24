@@ -1,7 +1,6 @@
 module X402Adapter where
 
 import Charter (SpendingPolicy, PaymentRecord)
-import DA.Time (Time)
 
 -- ---------------------------------------------------------------------------
 -- X402Receipt

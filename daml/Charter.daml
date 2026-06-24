@@ -1,6 +1,5 @@
 module Charter where
 
-import DA.Time (Time)
 
 -- | Lifecycle state of a payment authorization.
 data AuthStatus
