@@ -8,6 +8,7 @@ const links = [
   { href: '/agent',     label: 'Agent Feed' },
   { href: '/audit',     label: 'Audit Log' },
   { href: '/receipts',  label: 'X402 Receipts' },
+  { href: '/skill',     label: 'Skill' },
 ]
 
 export default function Nav() {

@@ -1,8 +1,11 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { queryContracts, exerciseChoice } from '@/lib/ledger'
 import type { PaymentAuth, SpendingPolicy } from '@/lib/types'
 import Toast from '@/components/Toast'
+
+const STORAGE_KEY = 'charter_connected_policy'
 
 type ToastState = { msg: string; type: 'success' | 'error' } | null
 
@@ -19,11 +22,28 @@ function statusBadge(tag: string) {
 }
 
 export default function AgentFeedPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const [connectedPolicy, setConnectedPolicy] = useState<string | null>(null)
   const [auths, setAuths] = useState<PaymentAuth[]>([])
   const [policies, setPolicies] = useState<SpendingPolicy[]>([])
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState<ToastState>(null)
   const [killing, setKilling] = useState(false)
+
+  // Handshake: ?connect=<policyId> in the URL saves the policy and cleans the URL
+  useEffect(() => {
+    const incoming = searchParams.get('connect')
+    if (incoming) {
+      localStorage.setItem(STORAGE_KEY, incoming)
+      setConnectedPolicy(incoming)
+      router.replace('/agent')
+      return
+    }
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) setConnectedPolicy(saved)
+  }, [searchParams, router])
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -45,6 +65,11 @@ export default function AgentFeedPage() {
     return () => clearInterval(interval)
   }, [load])
 
+  function disconnect() {
+    localStorage.removeItem(STORAGE_KEY)
+    setConnectedPolicy(null)
+  }
+
   async function killAll() {
     const active = policies.filter(p => p.payload.active)
     if (active.length === 0) { setToast({ msg: 'No active policies to deactivate', type: 'error' }); return }
@@ -60,6 +85,11 @@ export default function AgentFeedPage() {
     } finally { setKilling(false) }
   }
 
+  // Filter to connected agent's authorizations, or show all if disconnected
+  const visibleAuths = connectedPolicy
+    ? auths.filter(a => a.payload.policyId === connectedPolicy)
+    : auths
+
   const hasActive = policies.some(p => p.payload.active)
 
   return (
@@ -72,7 +102,7 @@ export default function AgentFeedPage() {
             <span className="live-label">Auto-refresh every 10s · Canton ledger</span>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <button className="btn" onClick={load}>↺ Refresh</button>
           {hasActive && (
             <button className="btn btn-kill" onClick={killAll} disabled={killing}>
@@ -81,6 +111,22 @@ export default function AgentFeedPage() {
           )}
         </div>
       </div>
+
+      {/* Connection status */}
+      {connectedPolicy ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, padding: '10px 14px', background: '#f0faf0', border: '1px solid #b3ddb3', fontSize: 11 }}>
+          <span style={{ color: '#2a7a2a', fontWeight: 700, letterSpacing: 1 }}>● CONNECTED</span>
+          <span style={{ fontFamily: 'monospace', color: '#444', flex: 1 }}>
+            {connectedPolicy.slice(0, 36)}...
+          </span>
+          <button className="btn btn-sm" onClick={disconnect} style={{ fontSize: 10 }}>Disconnect</button>
+        </div>
+      ) : (
+        <div style={{ marginBottom: 20, padding: '10px 14px', background: '#fafafa', border: '1px solid #e0e0e0', fontSize: 11, color: '#777' }}>
+          ○ No agent connected — showing all activity.{' '}
+          Run <code>node scripts/onboard.js &lt;name&gt;</code> and open the connect URL to filter to your agent.
+        </div>
+      )}
 
       {!hasActive && policies.length > 0 && (
         <div className="kill-banner">
@@ -97,16 +143,18 @@ export default function AgentFeedPage() {
 
       {loading
         ? <div className="loading">Loading agent activity...</div>
-        : auths.length === 0
+        : visibleAuths.length === 0
         ? (
           <div className="empty-state">
             <div className="empty-icon">◌</div>
-            <div className="empty-msg">No agent activity yet</div>
+            <div className="empty-msg">
+              {connectedPolicy ? 'No activity from this agent yet' : 'No agent activity yet'}
+            </div>
           </div>
         )
         : (
           <div className="feed">
-            {auths.map(a => (
+            {visibleAuths.map(a => (
               <div key={a.contractId} className={`feed-item ${statusClass(a.payload.status.tag)}`}>
                 <div className="feed-time">
                   {new Date(a.payload.requestedAt).toLocaleTimeString()}<br />

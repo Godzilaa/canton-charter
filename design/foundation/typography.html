@@ -1,0 +1,53 @@
+<!-- @dsCard group="Foundation" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Courier New', monospace; background: #fff; padding: 32px; }
+  h1 { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 32px; }
+  .row { display: flex; align-items: baseline; gap: 32px; padding: 20px 0; border-bottom: 1px solid #ccc; }
+  .meta { min-width: 140px; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #555; line-height: 1.6; }
+  .sample-h1   { font-size: 40px; font-weight: 900; letter-spacing: -1px; line-height: 1; }
+  .sample-h2   { font-size: 28px; font-weight: 700; letter-spacing: 0; }
+  .sample-h3   { font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+  .sample-label{ font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; }
+  .sample-body { font-size: 13px; font-weight: 400; line-height: 1.5; }
+  .sample-mono { font-size: 12px; font-family: 'Courier New', monospace; color: #333; }
+  .sample-tiny { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: #888; }
+</style>
+</head>
+<body>
+  <h1>Typography — Courier New / Monospace</h1>
+
+  <div class="row">
+    <div class="meta">H1<br>40px / 900<br>Page titles</div>
+    <div class="sample-h1">CHARTER</div>
+  </div>
+  <div class="row">
+    <div class="meta">H2<br>28px / 700<br>Section headers</div>
+    <div class="sample-h2">Spending Policy</div>
+  </div>
+  <div class="row">
+    <div class="meta">H3<br>18px / 700<br>Uppercase labels</div>
+    <div class="sample-h3">Payment Authorization</div>
+  </div>
+  <div class="row">
+    <div class="meta">LABEL<br>10px / 700<br>Form labels, nav</div>
+    <div class="sample-label">Enterprise Party ID</div>
+  </div>
+  <div class="row">
+    <div class="meta">BODY<br>13px / 400<br>Descriptions</div>
+    <div class="sample-body">AI agent requests payment authorization. All policy checks run on-chain.</div>
+  </div>
+  <div class="row">
+    <div class="meta">MONO<br>12px<br>Contract IDs, hashes</div>
+    <div class="sample-mono">7609a6c399::Charter:SpendingPolicy</div>
+  </div>
+  <div class="row">
+    <div class="meta">TINY<br>9px<br>Timestamps, meta</div>
+    <div class="sample-tiny">2024-06-22 · 10:00:00 UTC</div>
+  </div>
+</body>
+</html>

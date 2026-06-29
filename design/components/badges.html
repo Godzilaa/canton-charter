@@ -1,0 +1,65 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Courier New', monospace; background: #fff; padding: 32px; }
+  h1 { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 32px; }
+  .row { display: flex; align-items: center; gap: 24px; margin-bottom: 28px; }
+  .label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: #888; min-width: 100px; }
+  .badge { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; padding: 6px 14px; border: 2px solid #000; display: inline-block; }
+  .badge-lg { font-size: 14px; padding: 10px 20px; border: 3px solid #000; box-shadow: 3px 3px 0 #000; }
+  .pending  { background: #FFE600; color: #000; }
+  .approved { background: #00CC44; color: #000; }
+  .rejected { background: #FF2200; color: #fff; }
+  .active   { background: #000; color: #fff; }
+  .inactive { background: #fff; color: #000; }
+  .info     { background: #F0F0F0; color: #000; }
+  .divider { border: none; border-top: 1px solid #eee; margin: 4px 0 28px; }
+
+  .inline-example { display: flex; align-items: center; gap: 16px; padding: 16px; border: 3px solid #000; background: #fff; margin-top: 24px; }
+  .inline-example .amount { font-size: 28px; font-weight: 900; }
+  .inline-example .meta { font-size: 10px; color: #555; line-height: 1.8; }
+</style>
+</head>
+<body>
+  <h1>Status Badges</h1>
+
+  <div class="row">
+    <span class="label">Auth Status</span>
+    <span class="badge pending">PENDING</span>
+    <span class="badge approved">APPROVED</span>
+    <span class="badge rejected">REJECTED</span>
+  </div>
+  <div class="row">
+    <span class="label">Large</span>
+    <span class="badge badge-lg pending">PENDING APPROVAL</span>
+    <span class="badge badge-lg approved">APPROVED</span>
+    <span class="badge badge-lg rejected">REJECTED</span>
+  </div>
+  <hr class="divider">
+  <div class="row">
+    <span class="label">Policy</span>
+    <span class="badge active">● ACTIVE</span>
+    <span class="badge inactive">○ INACTIVE</span>
+  </div>
+  <hr class="divider">
+  <div class="row">
+    <span class="label">Categories</span>
+    <span class="badge info">API</span>
+    <span class="badge info">COMPUTE</span>
+    <span class="badge info">DATA</span>
+    <span class="badge info">STORAGE</span>
+  </div>
+
+  <div class="inline-example">
+    <div>
+      <div class="amount">$80.00</div>
+      <div class="meta">AWS · compute<br>2024-06-22 10:00 UTC</div>
+    </div>
+    <span class="badge badge-lg pending">PENDING APPROVAL</span>
+  </div>
+</body>
+</html>

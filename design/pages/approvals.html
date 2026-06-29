@@ -1,0 +1,138 @@
+<!-- @dsCard group="Pages" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Courier New', monospace; background: #fff; min-height: 100vh; }
+  nav { background: #000; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 52px; }
+  nav .logo { font-size: 16px; font-weight: 900; letter-spacing: 3px; }
+  nav .links { display: flex; }
+  nav .links a { color: #fff; text-decoration: none; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 16px 20px; border-left: 1px solid #333; }
+  nav .links a.active { background: #FFE600; color: #000; }
+  .main { padding: 40px 48px; }
+  .header-row { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 32px; }
+  .page-title { font-size: 32px; font-weight: 900; letter-spacing: -1px; }
+  .page-sub   { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-top: 4px; }
+  .count-badge { font-size: 40px; font-weight: 900; border: 3px solid #FF2200; padding: 8px 20px; color: #FF2200; }
+  .approval-card { border: 3px solid #000; margin-bottom: 20px; box-shadow: 5px 5px 0 #000; }
+  .card-header { background: #000; color: #fff; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .card-header .vendor { font-size: 16px; font-weight: 700; letter-spacing: 1px; }
+  .card-header .amount { font-size: 28px; font-weight: 900; }
+  .card-body { padding: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; border-bottom: 2px solid #000; }
+  .field-group .label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 4px; }
+  .field-group .value { font-size: 12px; font-weight: 600; }
+  .field-group .mono  { font-size: 10px; color: #555; }
+  .badge { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 3px 10px; border: 2px solid #000; }
+  .pending { background: #FFE600; }
+  .category { background: #F0F0F0; }
+  .card-actions { padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
+  .reject-input { flex: 1; font-family: 'Courier New', monospace; font-size: 12px; border: 2px solid #ccc; padding: 8px 12px; }
+  .btn { font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 12px 24px; border: 3px solid #000; cursor: pointer; box-shadow: 4px 4px 0 #000; }
+  .btn-approve { background: #00CC44; color: #000; }
+  .btn-reject  { background: #FF2200; color: #fff; }
+  .empty-state { border: 3px dashed #ccc; padding: 60px; text-align: center; color: #aaa; }
+  .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-state .msg  { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; }
+</style>
+</head>
+<body>
+  <nav>
+    <div class="logo">CHARTER</div>
+    <div class="links">
+      <a href="#">Dashboard</a>
+      <a href="#" class="active">Approvals</a>
+      <a href="#">Agent Feed</a>
+      <a href="#">Audit Log</a>
+      <a href="#">X402 Receipts</a>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="header-row">
+      <div>
+        <div class="page-title">CFO APPROVALS</div>
+        <div class="page-sub">Pending human sign-off · Live ledger stream</div>
+      </div>
+      <div class="count-badge">2</div>
+    </div>
+
+    <div class="approval-card">
+      <div class="card-header">
+        <div class="vendor">AWS</div>
+        <div class="amount">$80.00</div>
+      </div>
+      <div class="card-body">
+        <div class="field-group">
+          <div class="label">Category</div>
+          <div class="value"><span class="badge category">COMPUTE</span></div>
+        </div>
+        <div class="field-group">
+          <div class="label">Purpose</div>
+          <div class="value">Batch inference job</div>
+        </div>
+        <div class="field-group">
+          <div class="label">Requested</div>
+          <div class="value mono">2024-06-22 10:02 UTC</div>
+        </div>
+        <div class="field-group">
+          <div class="label">Agent</div>
+          <div class="value mono">AIAgent::1220a1...</div>
+        </div>
+        <div class="field-group">
+          <div class="label">Policy Cap</div>
+          <div class="value">$100.00 / tx</div>
+        </div>
+        <div class="field-group">
+          <div class="label">Status</div>
+          <div class="value"><span class="badge pending">PENDING APPROVAL</span></div>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-approve">✓ Approve</button>
+        <input class="reject-input" type="text" placeholder="Rejection reason (required to reject)...">
+        <button class="btn btn-reject">✗ Reject</button>
+      </div>
+    </div>
+
+    <div class="approval-card">
+      <div class="card-header">
+        <div class="vendor">WeatherAPI</div>
+        <div class="amount">$55.00</div>
+      </div>
+      <div class="card-body">
+        <div class="field-group">
+          <div class="label">Category</div>
+          <div class="value"><span class="badge category">API</span></div>
+        </div>
+        <div class="field-group">
+          <div class="label">Purpose</div>
+          <div class="value">Real-time data for logistics</div>
+        </div>
+        <div class="field-group">
+          <div class="label">Requested</div>
+          <div class="value mono">2024-06-22 10:08 UTC</div>
+        </div>
+        <div class="field-group">
+          <div class="label">Agent</div>
+          <div class="value mono">AIAgent::1220a1...</div>
+        </div>
+        <div class="field-group">
+          <div class="label">Policy Cap</div>
+          <div class="value">$100.00 / tx</div>
+        </div>
+        <div class="field-group">
+          <div class="label">Status</div>
+          <div class="value"><span class="badge pending">PENDING APPROVAL</span></div>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-approve">✓ Approve</button>
+        <input class="reject-input" type="text" placeholder="Rejection reason (required to reject)...">
+        <button class="btn btn-reject">✗ Reject</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

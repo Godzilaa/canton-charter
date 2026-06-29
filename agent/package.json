@@ -1,0 +1,10 @@
+{
+  "name": "canton-charter-agent",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.106.0"
+  }
+}

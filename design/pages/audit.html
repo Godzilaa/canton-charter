@@ -1,0 +1,148 @@
+<!-- @dsCard group="Pages" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Courier New', monospace; background: #fff; }
+  nav { background: #000; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 52px; }
+  nav .logo { font-size: 16px; font-weight: 900; letter-spacing: 3px; }
+  nav .links { display: flex; }
+  nav .links a { color: #fff; text-decoration: none; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 16px 20px; border-left: 1px solid #333; }
+  nav .links a.active { background: #FFE600; color: #000; }
+  .main { padding: 40px 48px; }
+  .header-row { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 32px; }
+  .page-title { font-size: 32px; font-weight: 900; letter-spacing: -1px; }
+  .page-sub   { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-top: 4px; }
+  .filter-bar { display: flex; gap: 0; margin-bottom: 24px; border: 3px solid #000; width: fit-content; }
+  .filter-btn { font-family: 'Courier New', monospace; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 8px 18px; border: none; border-right: 2px solid #000; background: #fff; cursor: pointer; }
+  .filter-btn:last-child { border-right: none; }
+  .filter-btn.active { background: #000; color: #fff; }
+  table { width: 100%; border-collapse: collapse; border: 3px solid #000; }
+  th { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; padding: 10px 14px; background: #000; color: #fff; text-align: left; border-right: 1px solid #333; white-space: nowrap; }
+  th:last-child { border-right: none; }
+  td { font-size: 11px; padding: 12px 14px; border-bottom: 1px solid #e0e0e0; border-right: 1px solid #eee; vertical-align: middle; }
+  td:last-child { border-right: none; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #F8F8F8; }
+  .badge { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 3px 8px; border: 1.5px solid #000; display: inline-block; }
+  .succeeded { background: #00CC44; }
+  .rejected  { background: #FF2200; color: #fff; }
+  .cat { background: #F0F0F0; }
+  .mono { font-size: 10px; color: #555; font-family: 'Courier New', monospace; }
+  .amount { font-weight: 700; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 3px solid #000; margin-bottom: 32px; }
+  .stat { padding: 20px 24px; border-right: 3px solid #000; }
+  .stat:last-child { border-right: none; }
+  .stat-num { font-size: 36px; font-weight: 900; line-height: 1; }
+  .stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-top: 6px; }
+</style>
+</head>
+<body>
+  <nav>
+    <div class="logo">CHARTER</div>
+    <div class="links">
+      <a href="#">Dashboard</a>
+      <a href="#">Approvals</a>
+      <a href="#">Agent Feed</a>
+      <a href="#" class="active">Audit Log</a>
+      <a href="#">X402 Receipts</a>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="header-row">
+      <div>
+        <div class="page-title">AUDIT LOG</div>
+        <div class="page-sub">Immutable payment records · On-chain</div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Total Payments</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" style="color:#00CC44;">6</div>
+        <div class="stat-label">Succeeded</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" style="color:#FF2200;">2</div>
+        <div class="stat-label">Rejected</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">$345.00</div>
+        <div class="stat-label">Total Settled</div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active">All</button>
+      <button class="filter-btn">Succeeded</button>
+      <button class="filter-btn">Rejected</button>
+      <button class="filter-btn">API</button>
+      <button class="filter-btn">Compute</button>
+      <button class="filter-btn">Data</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Vendor</th>
+          <th>Amount</th>
+          <th>Category</th>
+          <th>Purpose</th>
+          <th>Settled At</th>
+          <th>Outcome</th>
+          <th>Tx Ref</th>
+          <th>X402 Token</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>OpenAI</td>
+          <td class="amount">$25.00</td>
+          <td><span class="badge cat">API</span></td>
+          <td>LLM inference</td>
+          <td class="mono">2024-06-22 10:00</td>
+          <td><span class="badge succeeded">SUCCEEDED</span></td>
+          <td class="mono">x402-tx-001</td>
+          <td class="mono">tok_abc123</td>
+        </tr>
+        <tr>
+          <td>AWS</td>
+          <td class="amount">$80.00</td>
+          <td><span class="badge cat">COMPUTE</span></td>
+          <td>Batch inference job</td>
+          <td class="mono">2024-06-22 10:05</td>
+          <td><span class="badge succeeded">SUCCEEDED</span></td>
+          <td class="mono">x402-tx-002</td>
+          <td class="mono">tok_xyz789</td>
+        </tr>
+        <tr>
+          <td>UnknownCo</td>
+          <td class="amount">$90.00</td>
+          <td><span class="badge cat">DATA</span></td>
+          <td>Bulk data purchase</td>
+          <td class="mono">2024-06-22 10:08</td>
+          <td><span class="badge rejected">REJECTED</span></td>
+          <td class="mono">—</td>
+          <td class="mono">—</td>
+        </tr>
+        <tr>
+          <td>WeatherAPI</td>
+          <td class="amount">$5.00</td>
+          <td><span class="badge cat">API</span></td>
+          <td>Real-time weather data</td>
+          <td class="mono">2024-06-22 10:12</td>
+          <td><span class="badge succeeded">SUCCEEDED</span></td>
+          <td class="mono">x402-tx-003</td>
+          <td class="mono">x402-bearer-dead...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

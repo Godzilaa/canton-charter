@@ -1,0 +1,110 @@
+<!-- @dsCard group="Pages" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Courier New', monospace; background: #fff; }
+  nav { background: #000; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 52px; }
+  nav .logo { font-size: 16px; font-weight: 900; letter-spacing: 3px; }
+  nav .links { display: flex; }
+  nav .links a { color: #fff; text-decoration: none; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 16px 20px; border-left: 1px solid #333; }
+  nav .links a.active { background: #FFE600; color: #000; }
+  .main { padding: 40px 48px; }
+  .page-title { font-size: 32px; font-weight: 900; letter-spacing: -1px; margin-bottom: 4px; }
+  .page-sub   { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 32px; }
+  .receipt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .receipt-card { border: 3px solid #000; box-shadow: 5px 5px 0 #000; }
+  .receipt-header { background: #000; color: #fff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; }
+  .receipt-header .endpoint { font-size: 11px; font-weight: 700; letter-spacing: 1px; word-break: break-all; }
+  .receipt-header .network { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; border: 1px solid #fff; padding: 2px 8px; }
+  .receipt-body { padding: 20px; }
+  .receipt-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid #eee; }
+  .receipt-row:last-child { border-bottom: none; }
+  .receipt-key { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: #888; }
+  .receipt-val { font-size: 11px; font-weight: 600; text-align: right; max-width: 260px; word-break: break-all; }
+  .receipt-val.mono { font-size: 10px; color: #333; font-weight: 400; }
+  .receipt-val.amount { font-size: 20px; font-weight: 900; }
+  .badge { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 3px 8px; border: 1.5px solid #000; }
+  .usdc { background: #000; color: #fff; }
+</style>
+</head>
+<body>
+  <nav>
+    <div class="logo">CHARTER</div>
+    <div class="links">
+      <a href="#">Dashboard</a>
+      <a href="#">Approvals</a>
+      <a href="#">Agent Feed</a>
+      <a href="#">Audit Log</a>
+      <a href="#" class="active">X402 Receipts</a>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="page-title">X402 RECEIPTS</div>
+    <div class="page-sub">On-chain HTTP 402 payment provenance</div>
+
+    <div class="receipt-grid">
+      <div class="receipt-card">
+        <div class="receipt-header">
+          <div class="endpoint">api.openai.com/v1/chat</div>
+          <div class="network">Canton</div>
+        </div>
+        <div class="receipt-body">
+          <div class="receipt-row">
+            <span class="receipt-key">Amount</span>
+            <span class="receipt-val amount">$25.00</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-key">Currency</span>
+            <span class="receipt-val"><span class="badge usdc">USDC</span></span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-key">Payment Token</span>
+            <span class="receipt-val mono">x402-bearer-tok_abc123</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-key">Record ID</span>
+            <span class="receipt-val mono">7609a6c3::PaymentRecord#0</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-key">Received At</span>
+            <span class="receipt-val mono">2024-06-22 10:00 UTC</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="receipt-card">
+        <div class="receipt-header">
+          <div class="endpoint">api.weather.example/v1/forecast</div>
+          <div class="network">Canton</div>
+        </div>
+        <div class="receipt-body">
+          <div class="receipt-row">
+            <span class="receipt-key">Amount</span>
+            <span class="receipt-val amount">$5.00</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-key">Currency</span>
+            <span class="receipt-val"><span class="badge usdc">USDC</span></span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-key">Payment Token</span>
+            <span class="receipt-val mono">x402-bearer-deadbeef</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-key">Record ID</span>
+            <span class="receipt-val mono">7609a6c3::PaymentRecord#2</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-key">Received At</span>
+            <span class="receipt-val mono">2024-06-22 10:12 UTC</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

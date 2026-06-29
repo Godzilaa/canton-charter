@@ -1,0 +1,67 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Courier New', monospace; background: #fff; padding: 32px; }
+  h1 { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 32px; }
+  .row { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: #888; min-width: 100px; }
+  .btn { font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 12px 24px; border: 3px solid #000; cursor: pointer; box-shadow: 4px 4px 0px #000; transition: none; }
+  .btn-primary   { background: #000; color: #fff; }
+  .btn-secondary { background: #fff; color: #000; }
+  .btn-approve   { background: #00CC44; color: #000; border-color: #000; box-shadow: 4px 4px 0px #000; }
+  .btn-reject    { background: #FF2200; color: #fff; border-color: #000; box-shadow: 4px 4px 0px #000; }
+  .btn-warn      { background: #FFE600; color: #000; border-color: #000; box-shadow: 4px 4px 0px #000; }
+  .btn-kill      { background: #FF2200; color: #fff; border: 3px solid #000; box-shadow: 6px 6px 0px #000; font-size: 13px; padding: 16px 32px; }
+  .btn-sm        { padding: 6px 14px; font-size: 10px; box-shadow: 3px 3px 0px #000; }
+  .btn-lg        { padding: 18px 40px; font-size: 14px; box-shadow: 6px 6px 0px #000; }
+  .btn-disabled  { background: #ccc; color: #888; border-color: #aaa; box-shadow: none; cursor: not-allowed; }
+  .divider { border: none; border-top: 1px solid #eee; margin: 8px 0 24px; }
+</style>
+</head>
+<body>
+  <h1>Buttons</h1>
+
+  <div class="row">
+    <span class="label">Primary</span>
+    <button class="btn btn-primary">Create Policy</button>
+    <button class="btn btn-primary btn-sm">Submit</button>
+    <button class="btn btn-primary btn-lg">Deploy DAR</button>
+  </div>
+  <hr class="divider">
+  <div class="row">
+    <span class="label">Secondary</span>
+    <button class="btn btn-secondary">View Details</button>
+    <button class="btn btn-secondary btn-sm">Cancel</button>
+  </div>
+  <hr class="divider">
+  <div class="row">
+    <span class="label">Approve</span>
+    <button class="btn btn-approve">✓ Approve</button>
+    <button class="btn btn-approve btn-lg">✓ Approve Payment</button>
+  </div>
+  <div class="row">
+    <span class="label">Reject</span>
+    <button class="btn btn-reject">✗ Reject</button>
+    <button class="btn btn-reject btn-lg">✗ Reject Payment</button>
+  </div>
+  <div class="row">
+    <span class="label">Warning</span>
+    <button class="btn btn-warn">⚠ Deactivate</button>
+    <button class="btn btn-warn">Update Limits</button>
+  </div>
+  <hr class="divider">
+  <div class="row">
+    <span class="label">Kill Switch</span>
+    <button class="btn btn-kill">■ KILL SWITCH</button>
+  </div>
+  <hr class="divider">
+  <div class="row">
+    <span class="label">Disabled</span>
+    <button class="btn btn-disabled" disabled>Unavailable</button>
+  </div>
+</body>
+</html>

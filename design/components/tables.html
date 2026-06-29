@@ -1,0 +1,106 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Courier New', monospace; background: #fff; padding: 32px; }
+  h1 { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 32px; }
+  .section-title { font-size: 9px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 12px; }
+  table { width: 100%; border-collapse: collapse; border: 3px solid #000; margin-bottom: 40px; }
+  th { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; padding: 10px 14px; background: #000; color: #fff; text-align: left; border-right: 1px solid #333; }
+  th:last-child { border-right: none; }
+  td { font-size: 11px; padding: 12px 14px; border-bottom: 1px solid #ddd; border-right: 1px solid #eee; vertical-align: middle; }
+  td:last-child { border-right: none; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #F8F8F8; }
+  .badge { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 3px 8px; border: 1.5px solid #000; display: inline-block; }
+  .pending  { background: #FFE600; }
+  .approved { background: #00CC44; }
+  .rejected { background: #FF2200; color: #fff; }
+  .active   { background: #000; color: #fff; }
+  .mono { font-size: 10px; color: #555; }
+  .amount { font-weight: 700; font-size: 13px; }
+  .action-btn { font-family: 'Courier New', monospace; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 4px 10px; border: 2px solid #000; background: #fff; cursor: pointer; box-shadow: 2px 2px 0 #000; }
+  .action-btn.approve { background: #00CC44; }
+  .action-btn.reject  { background: #FF2200; color: #fff; }
+</style>
+</head>
+<body>
+  <h1>Data Tables</h1>
+
+  <div class="section-title">Payment Authorizations</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Vendor</th>
+        <th>Amount</th>
+        <th>Category</th>
+        <th>Purpose</th>
+        <th>Requested</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>OpenAI</td>
+        <td class="amount">$25.00</td>
+        <td><span class="badge">API</span></td>
+        <td>LLM inference for procurement</td>
+        <td class="mono">2024-06-22 10:00</td>
+        <td><span class="badge approved">APPROVED</span></td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>AWS</td>
+        <td class="amount">$80.00</td>
+        <td><span class="badge">COMPUTE</span></td>
+        <td>Batch inference job</td>
+        <td class="mono">2024-06-22 10:02</td>
+        <td><span class="badge pending">PENDING</span></td>
+        <td>
+          <button class="action-btn approve">✓ Approve</button>
+          <button class="action-btn reject">✗ Reject</button>
+        </td>
+      </tr>
+      <tr>
+        <td>UnknownCo</td>
+        <td class="amount">$90.00</td>
+        <td><span class="badge">DATA</span></td>
+        <td>Bulk data purchase</td>
+        <td class="mono">2024-06-22 10:05</td>
+        <td><span class="badge rejected">REJECTED</span></td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Spending Policies</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Agent</th>
+        <th>Max / Tx</th>
+        <th>Daily Limit</th>
+        <th>Categories</th>
+        <th>Approval Above</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="mono">AIAgent::1220...</td>
+        <td class="amount">$100.00</td>
+        <td class="amount">$500.00</td>
+        <td>api, compute, data</td>
+        <td>$50.00</td>
+        <td><span class="badge active">● ACTIVE</span></td>
+        <td><button class="action-btn">Edit</button></td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>

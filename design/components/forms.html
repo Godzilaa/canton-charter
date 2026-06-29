@@ -1,0 +1,107 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Courier New', monospace; background: #fff; padding: 32px; }
+  h1 { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 32px; }
+  .form-section { margin-bottom: 32px; }
+  .section-title { font-size: 9px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 16px; }
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+  .field input, .field select, .field textarea {
+    width: 100%; font-family: 'Courier New', monospace; font-size: 13px;
+    border: 3px solid #000; padding: 10px 12px; background: #fff;
+    outline: none; box-shadow: none; appearance: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { box-shadow: 4px 4px 0 #000; }
+  .field .hint { font-size: 9px; color: #888; margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
+  .field-error input { border-color: #FF2200; }
+  .field-error .error-msg { font-size: 9px; color: #FF2200; margin-top: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .toggle-row { display: flex; align-items: center; gap: 12px; }
+  .toggle { width: 40px; height: 22px; border: 3px solid #000; background: #ccc; cursor: pointer; position: relative; flex-shrink: 0; }
+  .toggle.on { background: #00CC44; }
+  .toggle::after { content: ''; position: absolute; top: 1px; left: 1px; width: 12px; height: 12px; background: #000; }
+  .toggle.on::after { left: 19px; }
+  .toggle-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+  .tag-input { display: flex; flex-wrap: wrap; gap: 8px; border: 3px solid #000; padding: 8px; }
+  .tag { background: #000; color: #fff; font-size: 9px; text-transform: uppercase; letter-spacing: 2px; padding: 4px 10px; display: flex; align-items: center; gap: 6px; }
+  .tag-remove { cursor: pointer; font-size: 11px; }
+  .tag-input input { border: none; font-family: 'Courier New', monospace; font-size: 12px; min-width: 80px; outline: none; }
+</style>
+</head>
+<body>
+  <h1>Form Components</h1>
+
+  <div class="form-section">
+    <div class="section-title">Text Inputs</div>
+    <div class="row-2">
+      <div class="field">
+        <label>Enterprise Party ID</label>
+        <input type="text" placeholder="5nsandbox-devnet-2::1220a1..." value="5nsandbox-devnet-2::1220a14ca128...">
+        <div class="hint">Format: Name::1220&lt;64 hex&gt;</div>
+      </div>
+      <div class="field">
+        <label>Agent Party ID</label>
+        <input type="text" placeholder="Enter party identifier...">
+      </div>
+    </div>
+    <div class="row-2">
+      <div class="field">
+        <label>Max Per Transaction ($)</label>
+        <input type="number" value="100.00">
+      </div>
+      <div class="field">
+        <label>Daily Limit ($)</label>
+        <input type="number" value="500.00">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="section-title">Tag Input — Allowed Categories</div>
+    <div class="field">
+      <label>Allowed Categories</label>
+      <div class="tag-input">
+        <span class="tag">API <span class="tag-remove">×</span></span>
+        <span class="tag">COMPUTE <span class="tag-remove">×</span></span>
+        <span class="tag">DATA <span class="tag-remove">×</span></span>
+        <input type="text" placeholder="Add category...">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="section-title">Toggles & Optional Fields</div>
+    <div class="field">
+      <div class="toggle-row">
+        <div class="toggle on"></div>
+        <span class="toggle-label">Policy Active</span>
+      </div>
+    </div>
+    <div class="field">
+      <div class="toggle-row">
+        <div class="toggle on"></div>
+        <span class="toggle-label">Require Approval Above Threshold</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>Approval Threshold ($)</label>
+      <input type="number" value="50.00">
+      <div class="hint">Payments at or above this amount require CFO sign-off</div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="section-title">Error State</div>
+    <div class="field field-error">
+      <label>Max Per Transaction ($)</label>
+      <input type="number" value="-10">
+      <div class="error-msg">⚠ Must be greater than 0</div>
+    </div>
+  </div>
+</body>
+</html>

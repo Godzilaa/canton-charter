@@ -1,0 +1,140 @@
+<!-- @dsCard group="Pages" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Courier New', monospace; background: #fff; min-height: 100vh; }
+  nav { background: #000; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 52px; border-bottom: 3px solid #000; }
+  nav .logo { font-size: 16px; font-weight: 900; letter-spacing: 3px; }
+  nav .links { display: flex; gap: 0; }
+  nav .links a { color: #fff; text-decoration: none; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 16px 20px; border-left: 1px solid #333; }
+  nav .links a.active { background: #FFE600; color: #000; }
+  .page { display: grid; grid-template-columns: 320px 1fr; min-height: calc(100vh - 52px); }
+  .sidebar { border-right: 3px solid #000; padding: 32px 24px; background: #F8F8F8; }
+  .sidebar h2 { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 20px; }
+  .policy-card { border: 3px solid #000; padding: 16px; margin-bottom: 16px; background: #fff; box-shadow: 4px 4px 0 #000; }
+  .policy-card .name { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+  .policy-card .limits { font-size: 10px; color: #555; line-height: 2; }
+  .badge { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 2px 8px; border: 1.5px solid #000; }
+  .active { background: #000; color: #fff; }
+  .main { padding: 40px 48px; }
+  .page-title { font-size: 32px; font-weight: 900; letter-spacing: -1px; margin-bottom: 4px; }
+  .page-sub   { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 40px; }
+  .form-card { border: 3px solid #000; padding: 32px; box-shadow: 6px 6px 0 #000; max-width: 680px; }
+  .form-card h3 { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 24px; }
+  .field { margin-bottom: 20px; }
+  .field label { display: block; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+  .field input, .field select { width: 100%; font-family: 'Courier New', monospace; font-size: 12px; border: 3px solid #000; padding: 10px 12px; background: #fff; outline: none; }
+  .field input:focus { box-shadow: 4px 4px 0 #000; }
+  .field .hint { font-size: 9px; color: #888; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .tag-input { display: flex; flex-wrap: wrap; gap: 6px; border: 3px solid #000; padding: 8px; }
+  .tag { background: #000; color: #fff; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; padding: 3px 8px; }
+  .tag-input input { border: none; font-family: 'Courier New', monospace; font-size: 12px; min-width: 80px; outline: none; }
+  .toggle-row { display: flex; align-items: center; gap: 10px; }
+  .toggle { width: 36px; height: 20px; border: 2px solid #000; background: #00CC44; cursor: pointer; }
+  .toggle-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+  .form-actions { display: flex; gap: 12px; margin-top: 28px; padding-top: 24px; border-top: 2px solid #000; }
+  .btn { font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 12px 28px; border: 3px solid #000; cursor: pointer; box-shadow: 4px 4px 0 #000; }
+  .btn-primary { background: #000; color: #fff; }
+  .btn-secondary { background: #fff; color: #000; }
+</style>
+</head>
+<body>
+  <nav>
+    <div class="logo">CHARTER</div>
+    <div class="links">
+      <a href="#" class="active">Dashboard</a>
+      <a href="#">Approvals</a>
+      <a href="#">Agent Feed</a>
+      <a href="#">Audit Log</a>
+      <a href="#">X402 Receipts</a>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="sidebar">
+      <h2>Active Policies</h2>
+      <div class="policy-card">
+        <div class="name">
+          AI Agent #1
+          <span class="badge active">● ACTIVE</span>
+        </div>
+        <div class="limits">
+          Max / Tx: <strong>$100.00</strong><br>
+          Daily: <strong>$500.00</strong><br>
+          Approval above: <strong>$50.00</strong><br>
+          Categories: <strong>api, compute, data</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="page-title">SPENDING POLICY</div>
+      <div class="page-sub">Create on-chain guardrails for your AI agent</div>
+
+      <div class="form-card">
+        <h3>New Policy</h3>
+
+        <div class="field">
+          <label>Enterprise Party ID</label>
+          <input type="text" value="5nsandbox-devnet-2::1220a14ca128063b8dc9d1ebb0bd226...">
+          <div class="hint">Your party — auto-filled from connected wallet</div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>Agent Party ID</label>
+            <input type="text" placeholder="Enter agent party identifier...">
+          </div>
+          <div class="field">
+            <label>Approver Party ID</label>
+            <input type="text" placeholder="Enter CFO party identifier...">
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>Max Per Transaction ($)</label>
+            <input type="number" value="100.00">
+          </div>
+          <div class="field">
+            <label>Daily Limit ($)</label>
+            <input type="number" value="500.00">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Allowed Categories</label>
+          <div class="tag-input">
+            <span class="tag">API</span>
+            <span class="tag">COMPUTE</span>
+            <span class="tag">DATA</span>
+            <input type="text" placeholder="Add category + Enter">
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="toggle-row">
+            <div class="toggle"></div>
+            <span class="toggle-label">Require human approval above threshold</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Approval Threshold ($)</label>
+          <input type="number" value="50.00">
+          <div class="hint">CFO must approve payments at or above this amount</div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary">Create Policy On-Chain</button>
+          <button class="btn btn-secondary">Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

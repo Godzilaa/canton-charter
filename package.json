@@ -1,0 +1,23 @@
+{
+  "name": "new",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "onboard": "node scripts/onboard.js",
+    "agent":   "node agent/index.js",
+    "sim":     "node scripts/agent-sim.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Godzilaa/canton-charter.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Godzilaa/canton-charter/issues"
+  },
+  "homepage": "https://github.com/Godzilaa/canton-charter#readme"
+}
